@@ -9,9 +9,15 @@
              id="name"
              class="form-control"
               name="name"
+              list="ingredients-list"
               ngModel
               required>
         </div>
+        <datalist id="ingredients-list">
+          <option
+            *ngFor="let ingredient of ingredients"
+            value="{{ingredient.name}}">
+        </datalist>
         <div class="col-sm-2 form-group">
           <label for="amount">Amount</label>
           <input

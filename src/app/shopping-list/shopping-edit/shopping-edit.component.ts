@@ -1,10 +1,12 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {NgForm} from '@angular/forms';
 
 
 import {Ingredient} from '../../shared/ingredient.model';
 import {ShoppingListService} from '../shopping-list.service';
+import {DataStorageService} from '../../shared/data-storage.service';
+import {AuthService} from '../../auth/auth.service';
 
 @Component({
   selector: 'app-shopping-edit',
@@ -13,12 +15,16 @@ import {ShoppingListService} from '../shopping-list.service';
 })
 export class ShoppingEditComponent implements OnInit, OnDestroy {
   @ViewChild('f', {static: false}) slForm: NgForm;
+  @Input() ingredients: Ingredient[];
   subscription: Subscription;
   editMode = false;
   editedItemIndex: number;
   editedItem: Ingredient;
+  userId: string;
 
-  constructor(private sltService: ShoppingListService) { }
+  constructor(private sltService: ShoppingListService,
+              private dataStorageService: DataStorageService,
+              private authService: AuthService) { }
 
   ngOnInit() {
     this.subscription = this.sltService.startedEditing
@@ -33,15 +39,16 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
           });
         }
       );
+    this.userId = this.authService.getUserIdentificator();
   }
 
   onSubmitItem(form: NgForm) {
     const value = form.value;
     const newIngredient = new Ingredient(value.name, value.amount);
     if (this.editMode){
-      this.sltService.updateIngredient(this.editedItemIndex, newIngredient)
+      this.sltService.updateIngredient(this.editedItemIndex, newIngredient, this.userId)
     }else{
-      this.sltService.addIngredient(newIngredient);
+      this.sltService.addIngredient(newIngredient, this.userId);
     }
     this.editMode = false;
     form.reset();

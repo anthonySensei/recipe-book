@@ -20,6 +20,7 @@ export class AuthService {
   user = new BehaviorSubject<User>(null);
   token: string = null;
   private tokenExpirationTimer: any;
+  private userId;
 
   constructor(
     private http: HttpClient,
@@ -36,6 +37,14 @@ export class AuthService {
          this.handleAuthentication(resData.email, resData.localId, resData.idToken ,+resData.expiresIn )
       })
     );
+  }
+
+  getUserIdentificator(): string{
+    return this.userId;
+  }
+
+  setUserIdentificator(userId: string){
+    this.userId = userId;
   }
 
   login(email: string, password: string){
@@ -76,6 +85,8 @@ export class AuthService {
       new Date(userData._tokenExpirationDate)
     );
 
+    this.userId = userData.id;
+
     if(loadedUser.token){
       this.user.next(loadedUser);
       const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
@@ -96,7 +107,7 @@ export class AuthService {
   autoLogout(expirationDuration: number){
     this.tokenExpirationTimer = setTimeout(() => {
       this.logout();
-    }, expirationDuration)
+    }, expirationDuration);
     console.log(expirationDuration);
   }
 
