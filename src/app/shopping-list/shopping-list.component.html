@@ -1,20 +1,38 @@
 <div class="row">
-  <div class="col-xs-10">
-    <app-shopping-edit [ingredients]="ingredients" ></app-shopping-edit>
+  <div class="col-xs-8">
+    <app-shopping-edit [ingredients]="allIngredients"></app-shopping-edit>
     <hr>
-<!--    <ul class="list-group" *ngIf="ingredients; else noIngredients">-->
-    <ul class="list-group">
-      <a
+    <div *ngIf="isLoading" style="text-align: center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+    <div *ngIf="!isLoading">
+      <ul class="list-group" *ngIf="ingredients; else noIngredients">
+        <a
           class="list-group-item"
           style="cursor: pointer"
           *ngFor="let ingredient of ingredients; let i = index"
           (click)="onEditItem(i)"
-          >
+        >
           {{ ingredient.name }} ({{ ingredient.amount }})
-      </a>
-    </ul>
-<!--    <ng-template #noIngredients>-->
-<!--      <span>There are no ingredients already</span>-->
-<!--    </ng-template>-->
+        </a>
+      </ul>
+      <ng-template #noIngredients>
+        <span>There are no ingredients already</span>
+      </ng-template>
+    </div>
+  </div>
+  <div class="col-xs-4" style="height: 400px; overflow: auto">
+    <table class="table" style="text-align: center">
+      <thead>
+      <tr>
+        <th style="text-align: center">Available Ingredients</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let availableIngredient of allIngredients">
+        <td>{{ availableIngredient.name }}</td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 </div>

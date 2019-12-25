@@ -9,21 +9,37 @@ import {HttpClient} from '@angular/common/http';
 export class ShoppingListService {
   startedEditing = new Subject<number>();
   ingredientsChange = new Subject<Ingredient[]>();
-  private ingredients: Ingredient[] = [
-    new Ingredient('Apples', 5),
-    new Ingredient('Tomatoes', 6)
-  ];
+  allIngredientChange = new Subject<Ingredient[]>();
+  private ingredients: Ingredient[] = [];
+  private allIngredients: Ingredient[] = [];
 
   constructor(private http: HttpClient) {
   }
 
+  getAllIngredients(){
+    return this.allIngredients;
+  }
+
   getIngredients() {
-    return this.ingredients.slice();
+    if (this.ingredients === null){
+      return this.ingredients;
+    }else{
+      return this.ingredients.slice();
+    }
   }
 
   setIngredients(ingredients: Ingredient[]) {
     this.ingredients = ingredients;
-    this.ingredientsChange.next(this.ingredients.slice());
+    if (this.ingredients === null){
+      this.ingredientsChange.next(this.ingredients);
+    }else {
+      this.ingredientsChange.next(this.ingredients.slice());
+    }
+  }
+
+  setAllIngredients(ingredients: Ingredient[]) {
+    this.allIngredients = ingredients;
+    this.allIngredientChange.next(this.allIngredients);
   }
 
   getIngredient(index: number) {
@@ -31,6 +47,9 @@ export class ShoppingListService {
   }
 
   addIngredient(ingredient: Ingredient, userId: string) {
+    if (this.ingredients === null){
+      this.ingredients = [];
+    }
     this.ingredients.push(ingredient);
     this.ingredientsChange.next(this.ingredients.slice());
     this.storeIngredients(userId);
@@ -47,9 +66,21 @@ export class ShoppingListService {
     this.storeIngredients(userId);
   }
 
-  deleteIngredient(index: number){
+  deleteIngredient(index: number, userId: string){
     this.ingredients.splice(index, 1);
     this.ingredientsChange.next(this.ingredients.slice());
+    this.http.delete(
+      `https://recipe-book-3459a.firebaseio.com/ingredients/${userId}/user-ingredients/${index}.json`
+    ).subscribe();
+    this.storeIngredients(userId);
+  }
+
+  deleteIngredients(userId: string){
+    this.ingredients.splice(0, this.ingredients.length);
+    this.ingredientsChange.next(this.ingredients);
+    this.http.delete(
+      `https://recipe-book-3459a.firebaseio.com/ingredients/${userId}/user-ingredients.json`
+    ).subscribe();
   }
 
   storeIngredients(userId: string){

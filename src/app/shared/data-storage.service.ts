@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 
 import {RecipeService} from '../recipes/recipe.service';
 import {Recipe} from '../recipes/recipe.model';
-import {exhaustMap, map, take, tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {AuthService} from '../auth/auth.service';
 import {ShoppingListService} from '../shopping-list/shopping-list.service';
 import {Ingredient} from './ingredient.model';
@@ -46,13 +46,6 @@ export class DataStorageService {
         }));
   }
 
-  storeIngredients(userId: string){
-    const ingredients = this.shoppingListService.getIngredients();
-    this.http.put(
-      `https://recipe-book-3459a.firebaseio.com/ingredients/${userId}/user-ingredients.json`,
-      ingredients
-    ).subscribe();
-  }
 
   fetchIngredients(userId: string) {
     return this.http
@@ -63,4 +56,16 @@ export class DataStorageService {
           this.shoppingListService.setIngredients(ingredients);
         }));
   }
+
+  fetchAllIngredients() {
+    return this.http
+      .get<Ingredient[]>(
+        'https://recipe-book-3459a.firebaseio.com/allIngredients.json'
+      ).pipe(
+        tap(ingredients => {
+          this.shoppingListService.setAllIngredients(ingredients);
+        }));
+  }
+
+
 }

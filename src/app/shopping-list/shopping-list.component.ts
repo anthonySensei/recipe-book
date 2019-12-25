@@ -15,22 +15,35 @@ import {AuthService} from '../auth/auth.service';
 export class ShoppingListComponent implements OnInit, OnDestroy {
   ingredients: Ingredient[];
   private subscription: Subscription;
+  private allIngSubscription: Subscription;
   userId;
+  allIngredients: Ingredient[];
+  isLoading = false;
 
   constructor(private slService: ShoppingListService,
               private dataStorageService: DataStorageService,
               private authService: AuthService) { }
 
   ngOnInit() {
+    this.isLoading = true;
     this.userId = this.authService.getUserIdentificator();
     this.dataStorageService.fetchIngredients(this.userId).subscribe();
+    this.dataStorageService.fetchAllIngredients().subscribe();
     this.subscription = this.slService.ingredientsChange
         .subscribe(
           (ingredients: Ingredient[]) => {
             this.ingredients = ingredients;
+            this.isLoading = false;
           }
         );
+    this.allIngSubscription = this.slService.allIngredientChange
+      .subscribe(
+        (ingredients: Ingredient[]) => {
+          this.allIngredients = ingredients;
+        }
+      );
     this.ingredients = this.slService.getIngredients();
+    this.allIngredients = this.slService.getAllIngredients();
   }
 
   onEditItem(index: number) {
