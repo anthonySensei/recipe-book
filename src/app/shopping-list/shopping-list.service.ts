@@ -55,9 +55,13 @@ export class ShoppingListService {
     this.storeIngredients(userId);
   }
 
-  addIngredients(ingredients: Ingredient[]) {
+  addIngredients(ingredients: Ingredient[], userId: string) {
+    if (this.ingredients === null){
+      this.ingredients = [];
+    }
     this.ingredients.push(...ingredients);
     this.ingredientsChange.next(this.ingredients.slice());
+    this.storeIngredients(userId);
   }
 
   updateIngredient(index: number, newIngredient: Ingredient, userId: string){

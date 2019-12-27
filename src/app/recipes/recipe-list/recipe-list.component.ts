@@ -35,6 +35,14 @@ export class RecipeListComponent implements OnInit, OnDestroy {
     this.router.navigate(['new'], {relativeTo: this.route})
   }
 
+  onSaveData(){
+    this.dataStorageService.storeRecipes();
+  }
+
+  onFetchData(){
+    this.dataStorageService.fetchRecipes().subscribe();
+  }
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }

@@ -9,7 +9,8 @@ import {PlaceholderDirective} from '../shared/placeholder/placeholder.directive'
 
 @Component({
   selector: 'app-auth',
-  templateUrl: './auth.component.html'
+  templateUrl: './auth.component.html',
+  styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnDestroy{
     isLoginMode = true;
@@ -26,6 +27,7 @@ export class AuthComponent implements OnDestroy{
 
     onSwitchMode(){
       this.isLoginMode = !this.isLoginMode;
+      this.error = null;
     }
 
     onSubmit(form: NgForm){
@@ -53,7 +55,9 @@ export class AuthComponent implements OnDestroy{
         }, errorMessage => {
           console.log(errorMessage);
           this.error = errorMessage;
-          this.showErrorAlert(errorMessage);
+          if (!this.isLoginMode){
+            this.showErrorAlert(errorMessage);
+          }
           this.isLoading = false;
         }
       );
@@ -64,6 +68,7 @@ export class AuthComponent implements OnDestroy{
   onHandleError(){
       this.error = null;
   }
+
 
   private showErrorAlert(message: string){
     const alertComponentFactory = this.componentFactoryResolver.resolveComponentFactory(AlertComponent);

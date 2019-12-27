@@ -16,7 +16,6 @@ export class HeaderComponent implements OnInit, OnDestroy{
 
 
   constructor(
-    private dataStorageService: DataStorageService,
     private authService: AuthService
   ) {}
 
@@ -32,13 +31,6 @@ export class HeaderComponent implements OnInit, OnDestroy{
     this.navbarCollapsed = !this.navbarCollapsed;
   }
 
-  onSaveData(){
-    this.dataStorageService.storeRecipes();
-  }
-
-  onFetchData(){
-    this.dataStorageService.fetchRecipes().subscribe();
-  }
 
   onLogout(){
     this.authService.logout();

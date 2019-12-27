@@ -1,0 +1,12 @@
+.input-group{
+  margin-bottom: 5px;
+}
+.btn{
+  margin-right: 5px;
+}
+input.ng-invalid.ng-touched {
+  border: 1px solid red;
+}
+.help-block{
+  margin-left: 7%;
+}
